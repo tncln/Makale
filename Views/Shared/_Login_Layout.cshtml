@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - ASP.NET Uygulamam</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="~/Assets/Plugins/Toastr/toastr.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="~/Assets/Plugins/Toastr/toastr.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="~/Assets/Custom/Js/Utility.js"></script>
+    <style>
+        .h-100vh {
+            height: 100vh;
+        }
+
+        .bg {
+            background-image: url('https://picsum.photos/g/1920?blur');
+        }
+
+        .shadow {
+            box-shadow: 0px 0px 10px #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="h-100 bg">
+        @RenderBody()
+    </div>
+
+
+
+    <script>
+
+        $("#ddl_theme").change(function () {
+            var theme = $(this).val();  // bg-primary
+
+            if (theme == "") {
+                $("#card_login_container").attr("class", "card shadow");
+                $("#card_login").attr("class", "card h-100");
+                $("#card_info").attr("class", "card-text text-center text-muted");
+                $("#forgot_pass").attr("class", "text-dark");
+                $("button[type='submit']").attr("class", "btn btn-default");
+            } else {
+                $("#card_login_container").attr("class", "card text-white shadow " + theme);
+                $("#card_login").attr("class", "card text-white h-100 " + theme);
+                $("#card_info").attr("class", "card-text text-center text-white");
+                $("#forgot_pass").attr("class", "text-white");
+                $("button[type='submit']").attr("class", "active btn " + theme.replace("bg-", "btn-"));
+            }
+
+        });
+    </script>
+
+
+    @*@RenderSection("scripts", required: false)*@
+</body>
+</html>

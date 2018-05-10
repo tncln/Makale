@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewBag.Title = "Login Sayfası";
+    Layout = "~/Views/Shared/_Login_Layout.cshtml";
+}
+@if (Session["SessionContext"] != null)
+{
+    Response.Redirect("/profile");
+}
+<div class="container-fluid h-100">
+    <div class="row align-items-center h-100vh">
+        <div class="col-md-6 offset-md-3">
+            <div id="card_login_container" class="card shadow">
+                <div class="row">
+                    <div class="col-md-6 pr-0">
+                        <!-- card -->
+                        <div id="card_login" class="card h-100">
+                            <!-- card header -->
+                            <div class="card-header">
+                                <h4 class="card-title">
+                                    Giriş
+                                </h4>
+                            </div>
+                            <!-- card-body -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p id="card_info" class="card-text text-center text-muted">
+                                            Mystils'e Hoşgeldiniz..
+                                        </p>
+                                        <hr>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form>
+                                            <div class="form-group">
+                                                <label>
+                                                    <b>Kullanıcı Adı</b>
+                                                </label>
+                                                <input type="text" id="inputUserName" class="form-control" placeholder="Kullanıcı Adınızı Giriniz.." required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>
+                                                    <b>Şifre</b>
+                                                </label>
+                                                <input type="password" id="inputPassword" class="form-control" placeholder="Şifrenizi Giriniz.." required>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" value="">
+                                                <label class="form-check-label">
+                                                    Parola Hatırla!
+                                                </label>
+                                            </div>
+                                            <div class="form-group pull-right">
+                                                <button onclick="LoginControl();" class="btn btn-success" id="gonder" type="button">
+                                                    <span class="fa fa-lock"></span>&nbsp;&nbsp;Giriş Yap
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card-footer -->
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a id="forgot_pass" href="#" class="text-dark">Şifremi Unuttum!</a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select id="ddl_theme" class="form-control dropdown">
+                                            <option value="" selected>Reset</option>
+                                            <option value="bg-primary">Primary</option>
+                                            <option value="bg-secondary">Secondary</option>
+                                            <option value="bg-success">Success</option>
+                                            <option value="bg-danger">Danger</option>
+                                            <option value="bg-warning">Warning</option>
+                                            <option value="bg-info">Info</option>
+                                            <option value="bg-light">Light</option>
+                                            <option value="bg-dark">Dark</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pl-0">
+                        <!-- carousel -->
+                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                            </ol>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img class="d-block w-100 rounded img-fluid" src="https://picsum.photos/450/750" alt="First slide">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h3>ASP.NET MVC</h3>
+                                        <p>Model-View-Controller, yazılım mühendisliğinde kullanılan bir "mimari desen"dir. Kullanıcıya yüklü miktarda verinin sunulduğu karmaşık uygulamalarda veri ve gösterimin soyutlanması esasına dayanır. </p>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img class="d-block w-100 rounded img-fluid" src="https://picsum.photos/450/750" alt="Second slide">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h3>Web API</h3>
+                                        <p>HTTP, üzerinden RESTful servisler geliştirmek için kullanılan bir framework.</p>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img class="d-block w-100 rounded img-fluid" src="https://picsum.photos/450/750" alt="Third slide">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h3>C#</h3>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("body").on("keydown", function (e) {
+        if (e.keyCode == 13)
+            LoginControl();
+    });
+    function LoginControl() {
+        var model = { UserName: $("#inputUserName").val(), Password: $("#inputPassword").val() };
+        if (model.UserName.trim() != "" && model.Password.trim()) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/Login/LoginControl",
+                data: model,
+                success: function (donen) {
+                    var sonuc = donen;
+                    if (donen == "")
+                        ShowMessage("error", "Giriş Hatası!", "Yanlış Kullanıcı Adı veya Şifre")
+                    else
+                        window.location = donen;
+                    console.log(donen);
+                }
+            });
+        } else {
+            ShowMessage("warning", "Kullanıcı Adı ve Şifre boş olamaz..", "Lütfen kullanıcı adı ve şifre giriniz!")
+        }
+    }
+</script>

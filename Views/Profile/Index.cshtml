@@ -1,0 +1,171 @@
+﻿
+@using MYMAKALE.UTILITIES.SessionOperations
+    @{
+        ViewBag.Title = "Profil Sayfası";
+    }
+    @model MYMAKALE.DTO.EEntity.EUserDTO
+    @{
+        var FullName = ((SessionContext)Session["SessionContext"]).FullName;
+        var Job = ((SessionContext)Session["SessionContext"]).Job;
+        var ImageUrl = ((SessionContext)Session["SessionContext"]).ImageUrl;
+    }
+    <div class="row profile">
+        <div class="col-md-3">
+            <div class="profile-sidebar card-shadow">
+                <!-- SIDEBAR USERPIC -->
+                <div class="profile-userpic">
+                    <img src="@ImageUrl" class="img-responsive" alt="">
+                </div>
+                <!-- END SIDEBAR USERPIC -->
+                <!-- SIDEBAR USER TITLE -->
+                <div class="profile-usertitle">
+                    <div class="profile-usertitle-name">
+                        @FullName
+                    </div>
+                    <div class="profile-usertitle-job">
+                        @Job
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="profile-content card-shadow">
+                <div class="tabbable-panel">
+                    <div class="tabbable-line">
+                        <ul class="nav nav-tabs ">
+                            <li class="active">
+                                <a href="#tab_informations" data-toggle="tab">
+                                    Bilgiler
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab_pass_reset" data-toggle="tab">
+                                    Şifre Yenile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tab_image_change" data-toggle="tab">
+                                    Profil Resmi
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_informations">
+                                <div class="form-group">
+                                    <label class="control-label">Ad Soyad</label>
+                                    <input type="text" id="inputFullName" value="@Model.FullName" class="form-control" placeholder="Ad Soyad Giriniz.." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Meslek</label>
+                                    <input type="text" id="inputJob" value="@Model.Job" class="form-control" placeholder="Meslek" />
+                                </div>
+                                <div class="form-group">
+                                    <a href="javascript:funcUserUpdateByFJ()" class="btn btn-primary btn-xs">Değişiklikleri Kaydet</a>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_pass_reset">
+                                <div class="form-group">
+                                    <label class="control-label">Kullanıcı Adı</label>
+                                    <input type="text" id="inputUserName" value="@Model.UserName" class="form-control" placeholder="Kullanıcı Adı Giriniz.." />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Şifre</label>
+                                    <input type="password" id="inputPassword" value="@Model.Password" class="form-control" placeholder="Şifre" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Şifre Tekrar</label>
+                                    <input type="password" id="inputPasswordAgain" class="form-control" placeholder="Şifre Tekrar " />
+                                </div>
+                                <div class="form-group">
+                                    <a href="javascript:funcUserUpdateByUP()" class="btn btn-primary btn-xs">Değişiklikleri Kaydet</a>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_image_change">
+                                <div class="col-md-12 row">
+                                    <div class="col-md-3 thumbnail">
+                                        <img id="imgProfile" src="@ImageUrl/80/80" class="img-responsive" />
+                                    </div>
+
+                                    <div class="col-md-12 row">
+                                        <div class="form-group caption" style="margin-top:10px;">
+                                            <input id="fileSelect"  type="file" accept="image/*" onchange="funcImageChange(this)" style="display:none;"/>
+                                            <a href="#" onclick="$('#fileSelect').click();" class="btn btn-warning btn-xs">Resmi Seç</a>
+                                            <a href="#" onclick="funcUserImageUpdate()" class="btn btn-success btn-xs">Güncelle</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+        function funcUserUpdateByFJ() {
+            if ($("#inputFullName").val().trim() != "" && $("#inputJob").val().trim() != "") {
+                var data = { WhichUpdate: "FJ", FullName: $("#inputFullName").val(), Job: $("#inputJob").val() };
+                $.ajax({
+                    url: "/admin/profile/update",
+                    type: "POST",
+                    data: data,
+                    success: function (e) {
+                        if (e == true) {
+                            ShowMessage("success", "Tebrikler", "Değişiklikler Başarı ile gerçekleştirildi.");
+                        }
+                    }
+                })
+            }
+            else {
+                ShowMessage("warning", "Boş Alanlar", "Lütfen boş alan bırakmayınız");
+            }
+        }
+        function funcUserUpdateByUP() {
+            if ($("#inputUserName").val().trim() != "" && $("#inputPassword").val().trim() != "") {
+                if ($("#inputPassword").val().trim() == $("#inputPasswordAgain").val().trim()) {
+                    var data = { WhichUpdate: "UP", UserName: $("#inputUserName").val(), Password: $("#inputPassword").val() };
+                    $.ajax({
+                        url: "/admin/profile/update",
+                        type: "POST",
+                        data: data,
+                        success: function (e) {
+                            if (e == true) {
+                                ShowMessage("success", "Tebrikler", "Değişiklikler Başarı ile gerçekleştirildi.");
+                            }
+                        }
+                    })
+                } else {
+                    ShowMessage("info", "Şifreler Farklı", "Lütfen Şifreleri Aynı Giriniz..");
+                }
+            } else {
+                ShowMessage("warning", "Boş Alanlar", "Lütfen boş alan bırakmayınız");
+            }
+        }
+        function funcImageChange(e) {
+            var data = new FormData();
+            data.append("ImageFormData", e.files[0]);
+            $.ajax({
+                url: "/admin/profile/tempimage",
+                type: "POST",
+                data: data,
+                cache: false,
+                processData: false,
+                contentType:false,
+                success: function (e) {
+                    $("#imgProfile").attr("src", "/profile/tempimageshow");
+                }
+            })
+        }
+        function funcUserImageUpdate() {
+            $.ajax({
+                url: "/admin/profile/UserImageUpdate",
+                type: "POST",
+                success: function (e) {
+                    if (e == true) {
+                        ShowMessage("success", "Tebrikler", "Resminiz başarı ile değiştirildi..");
+                    }
+                }
+            })
+        }
+    </script>
